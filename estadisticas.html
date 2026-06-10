@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="es">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -12,13 +13,6 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 
     <style>
-        body {
-            font-family: Arial, sans-serif;
-            background: #ffffff;
-            margin: 0;
-            padding: 0;
-        }
-
         header {
             background: #ffffff;
             padding: 15px 20px;
@@ -28,9 +22,37 @@
             border-bottom: 2px solid #ccc;
             display: flex;
             align-items: center;
-            gap: 15px;
+            gap: 20px;
             z-index: 2000;
         }
+
+        /* Nuevos estilos para la información del usuario */
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-weight: bold;
+            color: #4a001f;
+            /* Color institucional */
+            margin-left: auto;
+            /* Empuja el contenedor a la derecha */
+        }
+
+        .user-info i {
+            font-size: 1.5rem;
+        }
+
+
+
+
+        body {
+            font-family: Arial, sans-serif;
+            background: #ffffff;
+            margin: 0;
+            padding: 0;
+        }
+
+
 
         header img {
             width: 130px;
@@ -55,7 +77,7 @@
             border-radius: 8px;
             border-left: 5px solid #662c44;
             margin-bottom: 50px;
-            box-shadow: 0 3px 5px rgba(0,0,0,0.1);
+            box-shadow: 0 3px 5px rgba(0, 0, 0, 0.1);
         }
 
         .filtros {
@@ -82,206 +104,242 @@
 
 <body>
 
-<header>
-    <img src="assets/logo_favicon.png" alt="Logo JLCA">
-    <h1 class="m-0">Estadísticas – Informe global</h1>
-</header>
+    <header>
+        <img src="assets/logo_favicon.png" alt="Logo JLCA">
+        <h1 class="h4 m-0">Estadísticas – Informe global</h1>
 
-<div class="main-content">
-
-    <div class="mb-4">
-        <a href="boton_estadis.html" class="btn btn-back">
-            <i class="bi bi-arrow-left-circle"></i> Regresar
-        </a>
-    </div>
-
-    <div class="chart-container" id="barContainer">
-        <h2 class="section-title"><i class="bi bi-bar-chart-line"></i> Gráfica de Barras</h2>
-
-        <button class="btn btn-back mb-3" onclick="imprimirPDF('barContainer')">
-            <i class="bi bi-printer-fill"></i> Imprimir
-        </button>
-
-        <div class="row filtros">
-            <div class="col-md-4">
-                <label class="form-label">Año:</label>
-                <select id="barYear" class="form-select"></select>
-            </div>
-
-            <div class="col-md-4">
-                <label class="form-label">Mes:</label>
-                <select id="barMonth" class="form-select"></select>
-            </div>
-
-            <div class="col-md-4">
-                <label class="form-label">Tipo de documento:</label>
-                <select id="barType" class="form-select">
-                    <option value="Todos">Todos</option>
-                    <option>Ordinario</option>
-                    <option>Especial</option>
-                    <option>Paraprocesal</option>
-                    <option>Exhorto</option>
-                </select>
-            </div>
+        <div id="user-display" class="user-info" style="display: none;">
+            <i class="bi bi-person-circle"></i>
+            <span id="user-name">Cargando...</span>
         </div>
 
-        <canvas id="barChart" height="120"></canvas>
-    </div>
 
-    <div class="chart-container" id="pieContainer">
-        <h2 class="section-title"><i class="bi bi-pie-chart-fill"></i> Gráfica de Pastel</h2>
+    </header>
 
-        <button class="btn btn-back mb-3" onclick="imprimirPDF('pieContainer')">
-            <i class="bi bi-printer-fill"></i> Imprimir
-        </button>
+    <div class="main-content">
 
-        <div class="row filtros">
-            <div class="col-md-4">
-                <label class="form-label">Año:</label>
-                <select id="pieYear" class="form-select"></select>
-            </div>
-
-            <div class="col-md-4">
-                <label class="form-label">Mes:</label>
-                <select id="pieMonth" class="form-select"></select>
-            </div>
-
-            <div class="col-md-4">
-                <label class="form-label">Tipo de documento:</label>
-                <select id="pieType" class="form-select">
-                    <option value="Todos">Todos</option>
-                    <option>Ordinario</option>
-                    <option>Especial</option>
-                    <option>Paraprocesal</option>
-                    <option>Exhorto</option>
-                </select>
-            </div>
+        <div class="mb-4">
+            <a href="boton_estadis.html" class="btn btn-back">
+                <i class="bi bi-arrow-left-circle"></i> Regresar
+            </a>
         </div>
 
-        <canvas id="pieChart" height="80"></canvas>
-    </div>
+        <div class="chart-container" id="barContainer">
+            <h2 class="section-title"><i class="bi bi-bar-chart-line"></i> Gráfica de Barras</h2>
 
-    <div class="chart-container" id="lineContainer">
-        <h2 class="section-title"><i class="bi bi-graph-up"></i> Gráfica de Tendencia</h2>
+            <button class="btn btn-back mb-3" onclick="imprimirPDF('barContainer')">
+                <i class="bi bi-printer-fill"></i> Imprimir
+            </button>
 
-        <button class="btn btn-back mb-3" onclick="imprimirPDF('lineContainer')">
-            <i class="bi bi-printer-fill"></i> Imprimir
-        </button>
+            <div class="row filtros">
+                <div class="col-md-4">
+                    <label class="form-label">Año:</label>
+                    <select id="barYear" class="form-select"></select>
+                </div>
 
-        <div class="row filtros">
-            <div class="col-md-4">
-                <label class="form-label">Año:</label>
-                <select id="lineYear" class="form-select"></select>
+                <div class="col-md-4">
+                    <label class="form-label">Mes:</label>
+                    <select id="barMonth" class="form-select"></select>
+                </div>
+
+                <div class="col-md-4">
+                    <label class="form-label">Tipo de documento:</label>
+                    <select id="barType" class="form-select">
+                        <option value="Todos">Todos</option>
+                        <option>Ordinario</option>
+                        <option>Especial</option>
+                        <option>Paraprocesal</option>
+                        <option>Exhorto</option>
+                    </select>
+                </div>
             </div>
 
-            <div class="col-md-4">
-                <label class="form-label">Mes:</label>
-                <select id="lineMonth" class="form-select"></select>
-            </div>
-
-            <div class="col-md-4">
-                <label class="form-label">Tipo de documento:</label>
-                <select id="lineType" class="form-select">
-                    <option value="Todos">Todos</option>
-                    <option>Ordinario</option>
-                    <option>Especial</option>
-                    <option>Paraprocesal</option>
-                    <option>Exhorto</option>
-                </select>
-            </div>
+            <canvas id="barChart" height="120"></canvas>
         </div>
 
-        <canvas id="lineChart" height="120"></canvas>
+        <div class="chart-container" id="pieContainer">
+            <h2 class="section-title"><i class="bi bi-pie-chart-fill"></i> Gráfica de Pastel</h2>
+
+            <button class="btn btn-back mb-3" onclick="imprimirPDF('pieContainer')">
+                <i class="bi bi-printer-fill"></i> Imprimir
+            </button>
+
+            <div class="row filtros">
+                <div class="col-md-4">
+                    <label class="form-label">Año:</label>
+                    <select id="pieYear" class="form-select"></select>
+                </div>
+
+                <div class="col-md-4">
+                    <label class="form-label">Mes:</label>
+                    <select id="pieMonth" class="form-select"></select>
+                </div>
+
+                <div class="col-md-4">
+                    <label class="form-label">Tipo de documento:</label>
+                    <select id="pieType" class="form-select">
+                        <option value="Todos">Todos</option>
+                        <option>Ordinario</option>
+                        <option>Especial</option>
+                        <option>Paraprocesal</option>
+                        <option>Exhorto</option>
+                    </select>
+                </div>
+            </div>
+
+            <canvas id="pieChart" height="80"></canvas>
+        </div>
+
+        <div class="chart-container" id="lineContainer">
+            <h2 class="section-title"><i class="bi bi-graph-up"></i> Gráfica de Tendencia</h2>
+
+            <button class="btn btn-back mb-3" onclick="imprimirPDF('lineContainer')">
+                <i class="bi bi-printer-fill"></i> Imprimir
+            </button>
+
+            <div class="row filtros">
+                <div class="col-md-4">
+                    <label class="form-label">Año:</label>
+                    <select id="lineYear" class="form-select"></select>
+                </div>
+
+                <div class="col-md-4">
+                    <label class="form-label">Mes:</label>
+                    <select id="lineMonth" class="form-select"></select>
+                </div>
+
+                <div class="col-md-4">
+                    <label class="form-label">Tipo de documento:</label>
+                    <select id="lineType" class="form-select">
+                        <option value="Todos">Todos</option>
+                        <option>Ordinario</option>
+                        <option>Especial</option>
+                        <option>Paraprocesal</option>
+                        <option>Exhorto</option>
+                    </select>
+                </div>
+            </div>
+
+            <canvas id="lineChart" height="120"></canvas>
+        </div>
     </div>
-</div>
 
-<script>
-const datos = [
-    ["JL.J3.1.1.1/2020-168", "2719/2020", "Ordinario", "Descripción...", "2020"],
-    ["JL.J3.1.1.1/2025-001", "08/2025", "Ordinario", "Descripción...", "2025"],
-    ["JL.J3.1.1.1/2020-170", "174/2020", "Ordinario", "Descripción...", "2020"]
-];
+    <script>
+        const datos = [
+            ["JL.J3.1.1.1/2020-168", "2719/2020", "Ordinario", "Descripción...", "2020"],
+            ["JL.J3.1.1.1/2025-001", "08/2025", "Ordinario", "Descripción...", "2025"],
+            ["JL.J3.1.1.1/2020-170", "174/2020", "Ordinario", "Descripción...", "2020"]
+        ];
 
-function llenarAños(selectId) {
-    const years = [...new Set(datos.map(d => d[4]))].sort();
-    const sel = document.getElementById(selectId);
-    sel.innerHTML = "";
-    years.forEach(y => sel.innerHTML += `<option>${y}</option>`);
-}
+        function llenarAños(selectId) {
+            const years = [...new Set(datos.map(d => d[4]))].sort();
+            const sel = document.getElementById(selectId);
+            sel.innerHTML = "";
+            years.forEach(y => sel.innerHTML += `<option>${y}</option>`);
+        }
 
-function llenarMeses(selectId) {
-    const sel = document.getElementById(selectId);
-    sel.innerHTML = "";
-    const meses = ["ene","feb","mar","abr","may","jun","jul","ago","sep","oct","nov","dic"];
-    meses.forEach(m => sel.innerHTML += `<option>${m}</option>`);
-}
+        function llenarMeses(selectId) {
+            const sel = document.getElementById(selectId);
+            sel.innerHTML = "";
+            const meses = ["ene", "feb", "mar", "abr", "may", "jun", "jul", "ago", "sep", "oct", "nov", "dic"];
+            meses.forEach(m => sel.innerHTML += `<option>${m}</option>`);
+        }
 
-["barYear","pieYear","lineYear"].forEach(id => llenarAños(id));
-["barMonth","pieMonth","lineMonth"].forEach(id => llenarMeses(id));
+        ["barYear", "pieYear", "lineYear"].forEach(id => llenarAños(id));
+        ["barMonth", "pieMonth", "lineMonth"].forEach(id => llenarMeses(id));
 
-const barChart = new Chart(document.getElementById("barChart"), {
-    type: 'bar',
-    data: { labels: [], datasets: [{ label: 'Cantidad', data: [], backgroundColor: '#662c44' }] }
-});
+        const barChart = new Chart(document.getElementById("barChart"), {
+            type: 'bar',
+            data: { labels: [], datasets: [{ label: 'Cantidad', data: [], backgroundColor: '#662c44' }] }
+        });
 
-const pieChart = new Chart(document.getElementById("pieChart"), {
-    type: 'pie',
-    data: { labels: [], datasets: [{ data: [], backgroundColor: ['#662c44', '#7a1f43', '#aa5b76', '#c48194'] }] }
-});
+        const pieChart = new Chart(document.getElementById("pieChart"), {
+            type: 'pie',
+            data: { labels: [], datasets: [{ data: [], backgroundColor: ['#662c44', '#7a1f43', '#aa5b76', '#c48194'] }] }
+        });
 
-const lineChart = new Chart(document.getElementById("lineChart"), {
-    type: 'line',
-    data: { labels: [], datasets: [{ label: 'Tendencia', data: [], borderColor: '#662c44', tension: 0.3 }] }
-});
+        const lineChart = new Chart(document.getElementById("lineChart"), {
+            type: 'line',
+            data: { labels: [], datasets: [{ label: 'Tendencia', data: [], borderColor: '#662c44', tension: 0.3 }] }
+        });
 
-function generarDatos() {
-    return [5, 10, 7, 12, 15, 9, 4];
-}
+        function generarDatos() {
+            return [5, 10, 7, 12, 15, 9, 4];
+        }
 
-function actualizarGraficas() {
-    barChart.data.labels = ["A","B","C","D","E"];
-    barChart.data.datasets[0].data = generarDatos();
-    barChart.update();
+        function actualizarGraficas() {
+            barChart.data.labels = ["A", "B", "C", "D", "E"];
+            barChart.data.datasets[0].data = generarDatos();
+            barChart.update();
 
-    pieChart.data.labels = ["Ordinario","Especial","Paraprocesal","Exhorto"];
-    pieChart.data.datasets[0].data = generarDatos();
-    pieChart.update();
+            pieChart.data.labels = ["Ordinario", "Especial", "Paraprocesal", "Exhorto"];
+            pieChart.data.datasets[0].data = generarDatos();
+            pieChart.update();
 
-    lineChart.data.labels = ["Ene","Feb","Mar","Abr","May","Jun","Jul"];
-    lineChart.data.datasets[0].data = generarDatos();
-    lineChart.update();
-}
+            lineChart.data.labels = ["Ene", "Feb", "Mar", "Abr", "May", "Jun", "Jul"];
+            lineChart.data.datasets[0].data = generarDatos();
+            lineChart.update();
+        }
 
-document.querySelectorAll("select").forEach(sel => sel.addEventListener("change", actualizarGraficas));
+        document.querySelectorAll("select").forEach(sel => sel.addEventListener("change", actualizarGraficas));
 
-actualizarGraficas();
+        actualizarGraficas();
 
-async function imprimirPDF(divId) {
-    const { jsPDF } = window.jspdf;
-    const contenedor = document.getElementById(divId);
+        async function imprimirPDF(divId) {
+            const { jsPDF } = window.jspdf;
+            const contenedor = document.getElementById(divId);
 
-    const canvas = await html2canvas(contenedor, {
-        scale: 2,
-        backgroundColor: "#ffffff"
-    });
+            const canvas = await html2canvas(contenedor, {
+                scale: 2,
+                backgroundColor: "#ffffff"
+            });
 
-    const imgData = canvas.toDataURL("image/png");
-    const pdf = new jsPDF({
-        orientation: "portrait",
-        unit: "pt",
-        format: "letter"
-    });
+            const imgData = canvas.toDataURL("image/png");
+            const pdf = new jsPDF({
+                orientation: "portrait",
+                unit: "pt",
+                format: "letter"
+            });
 
-    const pageWidth = pdf.internal.pageSize.getWidth();
-    const imgWidth = pageWidth - 40;
-    const imgHeight = (canvas.height * imgWidth) / canvas.width;
+            const pageWidth = pdf.internal.pageSize.getWidth();
+            const imgWidth = pageWidth - 40;
+            const imgHeight = (canvas.height * imgWidth) / canvas.width;
 
-    pdf.addImage(imgData, "PNG", 20, 20, imgWidth, imgHeight);
-    pdf.save(`estadistica_${divId}.pdf`);
-}
-</script>
+            pdf.addImage(imgData, "PNG", 20, 20, imgWidth, imgHeight);
+            pdf.save(`estadistica_${divId}.pdf`);
+        }
 
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"></script>
+
+        // Función para verificar la sesión y cargar el nombre del usuario
+        function cargarUsuarioLogueado() {
+            fetch('get_user.php')
+                .then(response => response.json())
+                .then(data => {
+                    if (data.logged_in) {
+                        // Inyectar el nombre real del usuario
+                        document.getElementById('user-name').textContent = data.nombre;
+                        document.getElementById('user-display').style.display = 'flex';
+                    } else {
+                        // Redirigir al login si se intenta acceder sin autorización
+                        console.warn("Sesión no válida. Redirigiendo...");
+                        window.location.href = 'login.php';
+                    }
+                })
+                .catch(error => {
+                    console.error('Error al conectar con el backend:', error);
+                });
+        }
+
+        // Inicializar la carga del usuario cuando los elementos de la página estén listos
+        document.addEventListener('DOMContentLoaded', cargarUsuarioLogueado);
+
+
+    </script>
+
+
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"></script>
 
 </body>
+
 </html>

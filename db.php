@@ -1,8 +1,8 @@
 <?php
 $servername = "localhost";
-$username = "root";  // Cambia si usas otro usuario
-$password = "";      // Cambia si tienes contraseña en MySQL
-$dbname = "peoplewater";
+$username   = "root";   // Cambia si usas otro usuario
+$password   = "";       // Cambia si tienes contraseña en MySQL
+$dbname     = "global2026";
 
 $conn = new mysqli($servername, $username, $password, $dbname);
 

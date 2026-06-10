@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="es">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -9,11 +10,6 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
 
     <style>
-        body {
-            font-family: Arial, sans-serif;
-            background-color: #f5f5f5;
-        }
-
         header {
             background-color: #ffffff;
             padding: 15px 20px;
@@ -23,10 +19,34 @@
             left: 0;
             z-index: 3000;
             display: flex;
+            /* Asegura la alineación en línea de los elementos */
             align-items: center;
             gap: 20px;
             border-bottom: 2px solid #662c44;
         }
+
+        /* Nuevos estilos para la sección del usuario */
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-weight: bold;
+            color: #4a001f;
+            /* Color institucional */
+            margin-left: auto;
+            /* Empuja el bloque por completo a la derecha */
+        }
+
+        .user-info i {
+            font-size: 1.5rem;
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f5f5f5;
+        }
+
+
 
         header img.logo-header {
             width: 140px;
@@ -73,8 +93,9 @@
             border-radius: 10px;
             padding: 20px;
             margin: 30px auto;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
-            max-width: 700px; /* Limita el ancho de la tabla */
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            max-width: 700px;
+            /* Limita el ancho de la tabla */
         }
 
         table {
@@ -83,7 +104,8 @@
             border-spacing: 0;
         }
 
-        th, td {
+        th,
+        td {
             padding: 12px 15px;
             text-align: left;
         }
@@ -117,137 +139,230 @@
         }
     </style>
 </head>
+
 <body>
 
-<header>
-    <img src="assets/logo_favicon.png" class="logo-header" alt="Logo JLCA">
-    <h1 class="h4">Resultados Auditoría</h1>
-</header>
+    <header>
+        <img src="assets/logo_favicon.png" class="logo-header" alt="Logo JLCA">
+        <h1 class="h4">Resultados Auditoría</h1>
 
-<div class="main-content">
+        <div id="user-display" class="user-info" style="display: none;">
+            <i class="bi bi-person-circle"></i>
+            <span id="user-name">Cargando...</span>
+        </div>
+    </header>
 
-    <a href="boton_repor.html" class="btn btn-back">
-        <i class="bi bi-arrow-left-circle"></i> Regresar
-    </a>
+    <div class="main-content">
 
-    <div class="card-table">
-        <h3 class="section-title">Información General</h3>
-        <ul class="info-list">
-            <li><strong>Radiografía de la unidad:</strong> <span id="radiografia">Cargando...</span></li>
-            <li><strong>Unidad generadora de información:</strong> <span id="ugi">Cargando...</span></li>
-            <li><strong>Responsable de la Unidad:</strong> <span id="responsable">Cargando...</span></li>
-            <li><strong>TOTAL DE EXPEDIENTES:</strong> <span id="total">Cargando...</span></li>
-        </ul>
+        <a href="boton_repor.html" class="btn btn-back">
+            <i class="bi bi-arrow-left-circle"></i> Regresar
+        </a>
+
+        <div class="card-table">
+            <h3 class="section-title">Información General</h3>
+            <ul class="info-list">
+                <li><strong>Radiografía de la unidad:</strong> <span id="radiografia">Cargando...</span></li>
+                <li><strong>Unidad generadora de información:</strong> <span id="ugi">Cargando...</span></li>
+                <li><strong>Responsable de la Unidad:</strong> <span id="responsable">Cargando...</span></li>
+                <li><strong>TOTAL DE EXPEDIENTES:</strong> <span id="total">Cargando...</span></li>
+            </ul>
+        </div>
+
+        <div class="card-table">
+            <h3 class="section-title">Expedientes según estado procesal</h3>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Estado</th>
+                        <th>Cantidad</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>ARCHIVO</td>
+                        <td id="archivo"></td>
+                    </tr>
+                    <tr>
+                        <td>CADUCIDAD</td>
+                        <td id="caducidad"></td>
+                    </tr>
+                    <tr>
+                        <td>CDE</td>
+                        <td id="cde"></td>
+                    </tr>
+                    <tr>
+                        <td>CONVENIO</td>
+                        <td id="convenio"></td>
+                    </tr>
+                    <tr>
+                        <td>OAP</td>
+                        <td id="oap"></td>
+                    </tr>
+                    <tr>
+                        <td>DESAHOGO DE PRUEBAS</td>
+                        <td id="desahogo"></td>
+                    </tr>
+                    <tr>
+                        <td>ALEGATOS</td>
+                        <td id="alegatos"></td>
+                    </tr>
+                    <tr>
+                        <td>DESISTIMIENTO</td>
+                        <td id="desistimiento"></td>
+                    </tr>
+                    <tr>
+                        <td>INCOMPETENCIA</td>
+                        <td id="incompetencia"></td>
+                    </tr>
+                    <tr>
+                        <td>EJECUCION</td>
+                        <td id="ejecucion"></td>
+                    </tr>
+                    <tr>
+                        <td>OTRO</td>
+                        <td id="otro"></td>
+                    </tr>
+                    <tr>
+                        <td>CELDAS VACIAS</td>
+                        <td id="celdas_vacias"></td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <div class="card-table">
+            <h3 class="section-title">Expedientes por antigüedad</h3>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Antigüedad</th>
+                        <th>Cantidad</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>MENORES A 5 AÑOS</td>
+                        <td id="menor5"></td>
+                    </tr>
+                    <tr>
+                        <td>ENTRE 5 Y 10 AÑOS</td>
+                        <td id="entre5y10"></td>
+                    </tr>
+                    <tr>
+                        <td>ENTRE 10 Y 15 AÑOS</td>
+                        <td id="entre10y15"></td>
+                    </tr>
+                    <tr>
+                        <td>MAYORES A 15 AÑOS</td>
+                        <td id="mayor15"></td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <div class="card-table">
+            <h3 class="section-title">Expedientes por rezago</h3>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Rezago</th>
+                        <th>Cantidad</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>MENORES A 0</td>
+                        <td id="rezago0"></td>
+                    </tr>
+                    <tr>
+                        <td>MENOR O IGUAL A 1 AÑO</td>
+                        <td id="rezago1"></td>
+                    </tr>
+                    <tr>
+                        <td>ENTRE 1 Y 5 AÑOS</td>
+                        <td id="rezago1a5"></td>
+                    </tr>
+                    <tr>
+                        <td>ENTRE 5 Y 10 AÑOS</td>
+                        <td id="rezago5a10"></td>
+                    </tr>
+                    <tr>
+                        <td>MÁS DE 10 AÑOS</td>
+                        <td id="rezagoMas10"></td>
+                    </tr>
+                    <tr>
+                        <td>ERROR</td>
+                        <td id="rezagoError"></td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <footer>
+            Sistema Institucional de Archivos — JLCA © 2025
+        </footer>
+
     </div>
 
-    <div class="card-table">
-        <h3 class="section-title">Expedientes según estado procesal</h3>
-        <table>
-            <thead>
-                <tr>
-                    <th>Estado</th>
-                    <th>Cantidad</th>
-                </tr>
-            </thead>
-            <tbody>
-                <tr><td>ARCHIVO</td><td id="archivo"></td></tr>
-                <tr><td>CADUCIDAD</td><td id="caducidad"></td></tr>
-                <tr><td>CDE</td><td id="cde"></td></tr>
-                <tr><td>CONVENIO</td><td id="convenio"></td></tr>
-                <tr><td>OAP</td><td id="oap"></td></tr>
-                <tr><td>DESAHOGO DE PRUEBAS</td><td id="desahogo"></td></tr>
-                <tr><td>ALEGATOS</td><td id="alegatos"></td></tr>
-                <tr><td>DESISTIMIENTO</td><td id="desistimiento"></td></tr>
-                <tr><td>INCOMPETENCIA</td><td id="incompetencia"></td></tr>
-                <tr><td>EJECUCION</td><td id="ejecucion"></td></tr>
-                <tr><td>OTRO</td><td id="otro"></td></tr>
-                <tr><td>CELDAS VACIAS</td><td id="celdas_vacias"></td></tr>
-            </tbody>
-        </table>
-    </div>
+    <script>
+        document.addEventListener("DOMContentLoaded", () => {
+            document.getElementById("radiografia").textContent = "Junta Especial Numero 6";
+            document.getElementById("ugi").textContent = "Secretaria B";
+            document.getElementById("responsable").textContent = "Noel";
+            document.getElementById("total").textContent = "150";
 
-    <div class="card-table">
-        <h3 class="section-title">Expedientes por antigüedad</h3>
-        <table>
-            <thead>
-                <tr>
-                    <th>Antigüedad</th>
-                    <th>Cantidad</th>
-                </tr>
-            </thead>
-            <tbody>
-                <tr><td>MENORES A 5 AÑOS</td><td id="menor5"></td></tr>
-                <tr><td>ENTRE 5 Y 10 AÑOS</td><td id="entre5y10"></td></tr>
-                <tr><td>ENTRE 10 Y 15 AÑOS</td><td id="entre10y15"></td></tr>
-                <tr><td>MAYORES A 15 AÑOS</td><td id="mayor15"></td></tr>
-            </tbody>
-        </table>
-    </div>
+            //esta informacion es la que llama a la tabla de estados procesales
+            document.getElementById("archivo").textContent = 20;
+            document.getElementById("caducidad").textContent = 5;
+            document.getElementById("cde").textContent = 10;
+            document.getElementById("convenio").textContent = 8;
+            document.getElementById("oap").textContent = 15;
+            document.getElementById("desahogo").textContent = 12;
+            document.getElementById("alegatos").textContent = 7;
+            document.getElementById("desistimiento").textContent = 3;
+            document.getElementById("incompetencia").textContent = 2;
+            document.getElementById("ejecucion").textContent = 18;
+            document.getElementById("otro").textContent = 4;
+            document.getElementById("celdas_vacias").textContent = 1;
 
-    <div class="card-table">
-        <h3 class="section-title">Expedientes por rezago</h3>
-        <table>
-            <thead>
-                <tr>
-                    <th>Rezago</th>
-                    <th>Cantidad</th>
-                </tr>
-            </thead>
-            <tbody>
-                <tr><td>MENORES A 0</td><td id="rezago0"></td></tr>
-                <tr><td>MENOR O IGUAL A 1 AÑO</td><td id="rezago1"></td></tr>
-                <tr><td>ENTRE 1 Y 5 AÑOS</td><td id="rezago1a5"></td></tr>
-                <tr><td>ENTRE 5 Y 10 AÑOS</td><td id="rezago5a10"></td></tr>
-                <tr><td>MÁS DE 10 AÑOS</td><td id="rezagoMas10"></td></tr>
-                <tr><td>ERROR</td><td id="rezagoError"></td></tr>
-            </tbody>
-        </table>
-    </div>
+            //esta es la tabla de la antoguedad
+            document.getElementById("menor5").textContent = 50;
+            document.getElementById("entre5y10").textContent = 40;
+            document.getElementById("entre10y15").textContent = 30;
+            document.getElementById("mayor15").textContent = 30;
 
-    <footer>
-        Sistema Institucional de Archivos — JLCA © 2025
-    </footer>
+            //y esta es la de rezagp
+            document.getElementById("rezago0").textContent = 5;
+            document.getElementById("rezago1").textContent = 20;
+            document.getElementById("rezago1a5").textContent = 50;
+            document.getElementById("rezago5a10").textContent = 30;
+            document.getElementById("rezagoMas10").textContent = 40;
+            document.getElementById("rezagoError").textContent = 5;
+            cargarUsuarioLogueado();
+        });
+    </script>
 
-</div>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"></script>
 
-<script>
-document.addEventListener("DOMContentLoaded", () => {
-    document.getElementById("radiografia").textContent = "Junta Especial Numero 6";
-    document.getElementById("ugi").textContent = "Secretaria B";
-    document.getElementById("responsable").textContent = "Noel";
-    document.getElementById("total").textContent = "150";
-
-    //esta informacion es la que llama a la tabla de estados procesales
-    document.getElementById("archivo").textContent = 20;
-    document.getElementById("caducidad").textContent = 5;
-    document.getElementById("cde").textContent = 10;
-    document.getElementById("convenio").textContent = 8;
-    document.getElementById("oap").textContent = 15;
-    document.getElementById("desahogo").textContent = 12;
-    document.getElementById("alegatos").textContent = 7;
-    document.getElementById("desistimiento").textContent = 3;
-    document.getElementById("incompetencia").textContent = 2;
-    document.getElementById("ejecucion").textContent = 18;
-    document.getElementById("otro").textContent = 4;
-    document.getElementById("celdas_vacias").textContent = 1;
-
-    //esta es la tabla de la antoguedad
-    document.getElementById("menor5").textContent = 50;
-    document.getElementById("entre5y10").textContent = 40;
-    document.getElementById("entre10y15").textContent = 30;
-    document.getElementById("mayor15").textContent = 30;
-
-    //y esta es la de rezagp
-    document.getElementById("rezago0").textContent = 5;
-    document.getElementById("rezago1").textContent = 20;
-    document.getElementById("rezago1a5").textContent = 50;
-    document.getElementById("rezago5a10").textContent = 30;
-    document.getElementById("rezagoMas10").textContent = 40;
-    document.getElementById("rezagoError").textContent = 5;
-});
-</script>
-
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        function cargarUsuarioLogueado() {
+            fetch('get_user.php')
+                .then(response => response.json())
+                .then(data => {
+                    if (data.logged_in) {
+                        document.getElementById('user-name').textContent = data.nombre;
+                        document.getElementById('user-display').style.display = 'flex';
+                    } else {
+                        console.warn("Sesión inválida. Redirigiendo al login...");
+                        window.location.href = 'login.php';
+                    }
+                })
+                .catch(error => {
+                    console.error('Error al conectar con el backend:', error);
+                });
+        }
+    </script>
 
 </body>
+
 </html>

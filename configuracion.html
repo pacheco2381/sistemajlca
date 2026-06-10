@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Configuración</title>
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
+
+    <style>
+        /* Estilos agregados para la sección del usuario */
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-weight: bold;
+            color: #4a001f;
+            /* Tono institucional */
+            margin-left: auto;
+        }
+
+        .user-info i {
+            font-size: 1.5rem;
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #ffffff;
+        }
+
+        header {
+            background-color: #ffffff;
+            padding: 15px 20px;
+            position: fixed;
+            width: 100%;
+            top: 0;
+            left: 0;
+            z-index: 3000;
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            border-bottom: 2px solid #662c44;
+        }
+
+        header img.logo-header {
+            width: 140px;
+        }
+
+        .main-content {
+            padding: 140px 20px 40px 20px;
+            max-width: 900px;
+            margin: auto;
+        }
+
+        .config-section {
+            background-color: #f8f9fa;
+            border-left: 6px solid #6d807f;
+            padding: 25px;
+            margin-bottom: 35px;
+            border-radius: 6px;
+        }
+
+        .config-title {
+            color: #662c44;
+            font-weight: bold;
+            margin-bottom: 20px;
+        }
+
+        .list-group-item {
+            border-left: 4px solid #6d807f;
+            padding: 15px 20px;
+        }
+
+        .btn-primary {
+            background-color: #6d807f;
+            border-color: #6d807f;
+        }
+
+        .btn-primary:hover {
+            background-color: #ffb3c2;
+            border-color: #ffb3c2;
+        }
+
+        .btn-back {
+            background-color: #662c44;
+            color: white;
+            border: none;
+        }
+
+        .btn-back:hover {
+            background-color: #4a001f;
+            color: white;
+        }
+
+        footer {
+            margin-top: 30px;
+            padding: 20px 0;
+            text-align: center;
+            font-size: 0.9rem;
+            color: #777;
+        }
+    </style>
+</head>
+
+<body>
+
+    <header>
+        <img src="assets/logo_favicon.png" class="logo-header">
+        <h1 class="h4">Configuración del Usuario</h1>
+
+        <div id="user-display" class="user-info" style="display: none;">
+            <i class="bi bi-person-circle"></i>
+            <span id="user-name">Cargando...</span>
+        </div>
+
+    </header>
+
+    <div class="main-content">
+
+        <div class="mb-4">
+            <a href="dash.html" class="btn btn-back">
+                <i class="bi bi-arrow-left-circle"></i> Regresar
+            </a>
+        </div>
+
+
+        <div class="config-section">
+            <h3 class="config-title"><i class="bi bi-person-lines-fill"></i> Información del Usuario</h3>
+
+            <ul class="list-group">
+                <li class="list-group-item">
+                    <strong>Unidad Generadora de Información:</strong>
+                    <span id="ugi">Cargando...</span>
+                </li>
+                <li class="list-group-item">
+                    <strong>Área:</strong>
+                    <span id="area">Cargando...</span>
+                </li>
+                <li class="list-group-item">
+                    <strong>Nombre del Responsable:</strong>
+                    <span id="responsable">Cargando...</span>
+                </li>
+                <li class="list-group-item">
+                    <strong>Cargo / Puesto:</strong>
+                    <span id="cargo">Cargando...</span>
+                </li>
+            </ul>
+        </div>
+
+        <!-- TICKETS -->
+        <div class="config-section">
+            <h3 class="config-title"><i class="bi bi-exclamation-octagon-fill"></i> Soporte Técnico</h3>
+            <p>Describe el problema para enviar un ticket al area de Informatica.</p>
+
+            <form id="ticketForm">
+                <div class="mb-3">
+                    <label class="form-label">Título del Problema</label>
+                    <input type="text" class="form-control" name="titulo" required>
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label">Descripción</label>
+                    <textarea class="form-control" name="descripcion" rows="4" required></textarea>
+                </div>
+
+                <button type="submit" class="btn btn-primary">
+                    <i class="bi bi-send"></i> Enviar Ticket
+                </button>
+            </form>
+        </div>
+
+        <footer>
+            Sistema Institucional de Archivos — JLCA © 2025
+        </footer>
+    </div>
+
+    <script>
+        /* Cargar datos del usuario — Simulación */
+        document.addEventListener("DOMContentLoaded", () => {
+            const usuario = {
+                ugi: "Unidad de Transparencia",
+                area: "Unidad de Planeación y Asistencia Técnica",
+                responsable: "Pablo Armando Hernández Peguero",
+                cargo: "Coordinador General del SIA"
+            };
+
+            document.getElementById("ugi").textContent = usuario.ugi;
+            document.getElementById("area").textContent = usuario.area;
+            document.getElementById("responsable").textContent = usuario.responsable;
+            document.getElementById("cargo").textContent = usuario.cargo;
+        });
+
+        /* Enviar ticket */
+        document.getElementById("ticketForm").addEventListener("submit", function (e) {
+            e.preventDefault();
+            alert("Ticket enviado correctamente.");
+        });
+    </script>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"></script>
+
+    <script>
+        function cargarUsuarioLogueado() {
+            fetch('get_user.php')
+                .then(response => response.json())
+                .then(data => {
+                    if (data.logged_in) {
+                        // Muestra el nombre almacenado en $_SESSION['nombre']
+                        document.getElementById('user-name').textContent = data.nombre;
+                        document.getElementById('user-display').style.display = 'flex';
+                    } else {
+                        // Protección de ruta: si no hay sesión, redirige al login
+                        window.location.href = 'login.php';
+                    }
+                })
+                .catch(error => {
+                    console.error('Error al conectar con el servidor:', error);
+                });
+        }
+
+        // Iniciar la carga del usuario cuando el DOM esté listo
+        document.addEventListener('DOMContentLoaded', cargarUsuarioLogueado);
+    </script>
+
+</body>
+
+</html>

@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="es">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -9,6 +10,30 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
 
     <style>
+        header {
+            display: flex;
+            justify-content: space-between;
+            /* Separa el título del nombre de usuario */
+            align-items: center;
+        }
+
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-weight: bold;
+            color: #4a001f;
+            /* Color institucional basado en el login */
+            margin-left: auto;
+        }
+
+        .user-info i {
+            font-size: 1.5rem;
+        }
+
+
+
+
         body {
             font-family: Arial, sans-serif;
             background-color: #ffffff;
@@ -42,28 +67,28 @@
             text-decoration: none;
         }
 
-.card {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    text-align: center;
-    background: #6d807f;
-    color: white;
-    padding: 20px;
-    border-radius: 8px;
-    box-shadow: 0 3px 5px rgba(0,0,0,0.1);
-    transition: transform 0.3s, box-shadow 0.3s, background-color 0.3s;
-    height: 100%;
-    position: relative;
-    z-index: 1; 
-}
+        .card {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            background: #6d807f;
+            color: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 3px 5px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s, box-shadow 0.3s, background-color 0.3s;
+            height: 100%;
+            position: relative;
+            z-index: 1;
+        }
 
-.card:hover {
-    transform: translateY(-8px);
-    background-color: #ffb3c2;   
-    box-shadow: 0 12px 25px rgba(0,0,0,0.25); 
-    cursor: pointer;
-}
+        .card:hover {
+            transform: translateY(-8px);
+            background-color: #ffb3c2;
+            box-shadow: 0 12px 25px rgba(0, 0, 0, 0.25);
+            cursor: pointer;
+        }
 
 
         .btn-back {
@@ -89,58 +114,88 @@
 
 <body>
 
-<header>
-    <img src="assets/logo_favicon.png" class="logo-header">
-    <h1 class="h4">Panel de Estadísticas</h1>
-</header>
+    <header>
+        <!-- Mantén tu logo y título actual -->
+        <img src="assets/logo_favicon.png" class="logo-header" alt="Logo">
+        <h1 class="h4 m-0">Estadísticas Institucionales</h1>
 
-<div class="main-content">
+        <!-- Bloque para el nombre del usuario logueado -->
+        <div id="user-display" class="user-info" style="display: none;">
+            <i class="bi bi-person-circle"></i>
+            <span id="user-name">Cargando...</span>
+        </div>
+    </header>
 
-    <div class="mb-4">
-        <a href="dash.php" class="btn btn-back">
-            <i class="bi bi-arrow-left-circle"></i> Regresar
-        </a>
+    <div class="main-content">
+
+        <div class="mb-4">
+            <a href="dash.html" class="btn btn-back">
+                <i class="bi bi-arrow-left-circle"></i> Regresar
+            </a>
+        </div>
+
+        <div class="row g-4">
+
+            <div class="col-md-4">
+                <a href="#" class="card-link">
+                    <div class="card text-center border-0 shadow-sm p-4">
+                        <i class="bi bi-graph-up-arrow" style="font-size: 3rem; color:#662c44;"></i>
+                        <h5 class="mt-3">Estadísticas de Evaluación al Desempeño</h5>
+                        <p class="text-muted">Consulta los resultados de desempeño por área.</p>
+                    </div>
+                </a>
+            </div>
+
+            <div class="col-md-4">
+                <a href="#" class="card-link">
+                    <div class="card text-center border-0 shadow-sm p-4">
+                        <i class="bi bi-ui-checks-grid" style="font-size: 3rem; color:#662c44;"></i>
+                        <h5 class="mt-3">Estadística de Radiografías</h5>
+                        <p class="text-muted">Accede a la información detallada de radiografías institucionales.</p>
+                    </div>
+                </a>
+            </div>
+
+            <div class="col-md-4">
+                <a href="estadisticas.html" class="card-link">
+                    <div class="card text-center border-0 shadow-sm p-4">
+                        <i class="bi bi-file-bar-graph-fill" style="font-size: 3rem; color:#662c44;"></i>
+                        <h5 class="mt-3">Estadísticas de Informes Mensuales</h5>
+                        <p class="text-muted">Revisa los informes mensuales de todas las áreas.</p>
+                    </div>
+                </a>
+            </div>
+        </div>
+
+        <footer>
+            Sistema Institucional de Archivos — JLCA © 2025
+        </footer>
+
     </div>
 
-    <div class="row g-4">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        function cargarUsuarioLogueado() {
+            fetch('get_user.php')
+                .then(response => response.json())
+                .then(data => {
+                    if (data.logged_in) {
+                        // Muestra el nombre almacenado en $_SESSION['nombre']
+                        document.getElementById('user-name').textContent = data.nombre;
+                        document.getElementById('user-display').style.display = 'flex';
+                    } else {
+                        // Protección de ruta: si no hay sesión, redirige al login
+                        window.location.href = 'login.php';
+                    }
+                })
+                .catch(error => {
+                    console.error('Error al conectar con el servidor:', error);
+                });
+        }
 
-        <div class="col-md-4">
-            <a href="#" class="card-link">
-                <div class="card text-center border-0 shadow-sm p-4">
-                    <i class="bi bi-graph-up-arrow" style="font-size: 3rem; color:#662c44;"></i>
-                    <h5 class="mt-3">Estadísticas de Evaluación al Desempeño</h5>
-                    <p class="text-muted">Consulta los resultados de desempeño por área.</p>
-                </div>
-            </a>
-        </div>
-
-        <div class="col-md-4">
-            <a href="#" class="card-link">
-                <div class="card text-center border-0 shadow-sm p-4">
-                    <i class="bi bi-ui-checks-grid" style="font-size: 3rem; color:#662c44;"></i>
-                    <h5 class="mt-3">Estadística de Radiografías</h5>
-                    <p class="text-muted">Accede a la información detallada de radiografías institucionales.</p>
-                </div>
-            </a>
-        </div>
-
-        <div class="col-md-4">
-            <a href="estadisticas.html" class="card-link">
-                <div class="card text-center border-0 shadow-sm p-4">
-                    <i class="bi bi-file-bar-graph-fill" style="font-size: 3rem; color:#662c44;"></i>
-                    <h5 class="mt-3">Estadísticas de Informes Mensuales</h5>
-                    <p class="text-muted">Revisa los informes mensuales de todas las áreas.</p>
-                </div>
-            </a>
-        </div>
-    </div>
-
-    <footer>
-        Sistema Institucional de Archivos — JLCA © 2025
-    </footer>
-
-</div>
-
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"></script>
+        // Iniciar la carga del usuario cuando el DOM esté listo
+        document.addEventListener('DOMContentLoaded', cargarUsuarioLogueado);
+    </script>
 </body>
+
 </html>
