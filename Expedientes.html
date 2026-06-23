@@ -2,33 +2,33 @@
 <html lang="es">
 
 <head>
+
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
     <title>Gestión de Expedientes</title>
 
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet">
-
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
 
     <style>
         body {
             font-family: Arial, sans-serif;
-            background: #ffffff;
-            margin: 0;
-            padding: 0;
+            background-color: #f5f5f5;
         }
 
         header {
-            background: #ffffff;
+            background-color: #ffffff;
             padding: 15px 20px;
             position: fixed;
             width: 100%;
             top: 0;
-            border-bottom: 2px solid #ccc;
+            left: 0;
+            z-index: 3000;
             display: flex;
             align-items: center;
-            gap: 15px;
-            z-index: 2000;
+            gap: 20px;
+            border-bottom: 2px solid #662c44;
         }
 
         header img {
@@ -36,311 +36,800 @@
         }
 
         .main-content {
-            max-width: 1200px;
-            margin: 160px auto 40px auto;
-            padding: 0 20px;
-        }
-
-        .top-menu {
-            display: flex;
-            gap: 10px;
-            margin-bottom: 40px;
+            padding: 140px 20px 40px 20px;
+            max-width: 2500px;
+            margin: auto;
         }
 
         .btn-menu {
-            background: #662c44;
+            background-color: #662c44;
             color: white;
-            font-weight: bold;
+            border: none;
         }
 
         .btn-menu:hover {
-            background: #7a1f43;
+            background-color: #4a001f;
             color: white;
         }
 
-        .panel-box {
-            background: #f5f5f5;
+        .card-table {
+            background-color: white;
+            border-radius: 10px;
             padding: 25px;
-            border-radius: 8px;
-            border-left: 5px solid #662c44;
-            margin-bottom: 50px;
-            box-shadow: 0 3px 5px rgba(0, 0, 0, 0.1);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
         }
 
-        h2.section-title {
-            border-left: 6px solid #662c44;
-            padding-left: 10px;
+        .section-title {
+            color: #662c44;
             font-weight: bold;
             margin-bottom: 20px;
+            font-size: 1.3rem;
         }
 
-        .back-btn {
-            margin-top: 20px;
+        .toolbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: end;
+            gap: 15px;
+            margin-bottom: 25px;
+            flex-wrap: wrap;
+        }
+
+        .filters {
+            display: flex;
+            gap: 15px;
+            flex-wrap: wrap;
+        }
+
+        .table-responsive {
+            overflow-x: auto;
+            border-radius: 8px;
+        }
+
+        table {
+            min-width: 2200px;
+        }
+
+        .table thead {
+            background-color: #662c44;
+            color: white;
+            font-size: 0.9rem;
+        }
+
+        th {
+            white-space: nowrap;
+        }
+
+        td {
+            vertical-align: middle;
+            font-size: 0.9rem;
+        }
+
+        .table tbody tr:hover {
+            background-color: #fff3f6;
+            transition: 0.2s;
+        }
+
+        .acciones {
+            display: flex;
+            gap: 5px;
+        }
+
+        .btn-icon {
+            border: none;
+            padding: 6px 10px;
+            border-radius: 6px;
+        }
+
+        .btn-edit {
+            background-color: #ffc107;
+        }
+
+        .btn-delete {
+            background-color: #dc3545;
+            color: white;
+        }
+
+        .badge-activo {
+            background-color: #198754;
+        }
+
+        footer {
+            margin-top: 40px;
+            padding: 20px 0;
+            text-align: center;
+            color: #777;
+            font-size: 0.9rem;
         }
     </style>
-</head>
 
+</head>
 
 <body>
 
-
     <header>
-        <img src="assets/logo_favicon.png" alt="Logo JLCA">
-        <h1 class="m-0">Gestión de Expedientes – JLCA</h1>
 
-        <a href="dash.php" class="btn btn-menu ms-auto">
+        <img src="assets/logo_favicon.png" alt="Logo JLCA">
+
+        <h1 class="h4 m-0">
+            Gestión de Expedientes
+        </h1>
+
+        <a href="dash.html" class="btn btn-menu ms-auto">
             <i class="bi bi-house-fill"></i> Inicio
         </a>
+
     </header>
-
-
 
     <div class="main-content">
 
-        <div class="top-menu">
-            <a href="#buscar" class="btn btn-menu"><i class="bi bi-search"></i> Búsqueda</a>
-            <a href="#alta" class="btn btn-menu"><i class="bi bi-folder-plus"></i> Alta / Modificación</a>
-            <a href="#eliminar" class="btn btn-menu"><i class="bi bi-trash"></i> Eliminar Expediente</a>
-        </div>
+        <div class="card-table">
 
-        <div id="buscar" class="panel-box">
-            <h2 class="section-title"><i class="bi bi-search"></i> Buscar Expedientes</h2>
+            <div class="d-flex justify-content-between align-items-center flex-wrap mb-4">
 
-            <div class="row g-3 mb-3">
-                <div class="col-md-6">
-                    <label class="form-label">Buscar:</label>
-                    <input id="searchInput" type="text" class="form-control" placeholder="Escriba para filtrar...">
+                <div>
+
+                    <h2 class="section-title mb-1">
+                        Expedientes Registrados
+                    </h2>
+
+                    <p class="text-muted mb-0">
+                        Consulta, edición y administración institucional de expedientes.
+                    </p>
+
                 </div>
 
-                <div class="col-md-3">
-                    <label class="form-label">Mostrar:</label>
-                    <select id="rowsSelector" class="form-select">
-                        <option value="10">10 resultados</option>
-                        <option value="25">25 resultados</option>
-                        <option value="50">50 resultados</option>
-                    </select>
+                <button class="btn btn-menu" onclick="nuevoExpediente()" data-bs-toggle="modal"
+                    data-bs-target="#modalExpediente">
+                    <i class="bi bi-folder-plus"></i>
+                    Nuevo Expediente
+                </button>
+
+            </div>
+
+            <div class="toolbar">
+
+                <div class="filters">
+
+                    <div>
+                        <label class="form-label">Buscar</label>
+
+                        <input type="text" id="searchInput" class="form-control" placeholder="Buscar expediente...">
+                    </div>
+
+                    <div>
+                        <label class="form-label">Año</label>
+
+                        <select id="filterYear" class="form-select">
+                            <option value="">Todos</option>
+                        </select>
+                    </div>
+
+                    <div>
+                        <label class="form-label">Tipo</label>
+
+                        <select id="filterType" class="form-select">
+
+                            <option value="">Todos</option>
+                            <option>ORDINARIO</option>
+                            <option>ESPECIAL</option>
+                            <option>PARAPROCESAL</option>
+                            <option>EXHORTO</option>
+                            <option>COLECTIVO</option>
+
+                        </select>
+
+                    </div>
+
                 </div>
+
             </div>
 
             <div class="table-responsive">
-                <table id="resultsTable" class="table table-bordered table-striped">
+
+                <table class="table table-bordered align-middle table-hover">
+
                     <thead>
+
                         <tr>
+
+                            <th>Num Exp</th>
                             <th>Serie documental</th>
-                            <th>Número de expediente</th>
-                            <th>Tipo</th>
-                            <th>Descripción</th>
-                            <th>Año</th>
+                            <th>Descripción del archivo o documento</th>
+                            <th>Tipo Exp</th>
+                            <th>Fase</th>
+                            <th>Fecha Audiencia</th>
+                            <th>Hora Audiencia</th>
+                            <th>Observaciones</th>
+                            <th>Unidad Conservación</th>
+                            <th>Número Folios</th>
+                            <th>Fecha inicio vida</th>
+                            <th>Año Expediente</th>
+                            <th>UGI</th>
+                            <th>Transferencia primaria</th>
+                            <th>Índice</th>
+                            <th>Estado</th>
                             <th>Acciones</th>
+
                         </tr>
+
                     </thead>
+
                     <tbody id="tableBody"></tbody>
+
                 </table>
+
             </div>
 
-            <a href="#" class="btn btn-secondary back-btn">Volver arriba</a>
         </div>
 
+        <footer>
+            Sistema Institucional de Archivos — JLCA © 2025
+        </footer>
 
-        <div id="alta" class="panel-box">
-            <h2 class="section-title"><i class="bi bi-folder-plus"></i> Alta / Modificación de Expedientes</h2>
+    </div>
 
-            <div class="mb-4">
-                <label class="form-label">Buscar expediente para editar:</label>
-                <input type="text" class="form-control" placeholder="Ingrese número de expediente">
-                <button class="btn btn-menu mt-2"><i class="bi bi-search"></i> Buscar</button>
-            </div>
+    <!-- MODAL -->
 
-            <form>
-                <div class="row g-3">
+    <div class="modal fade" id="modalExpediente" tabindex="-1">
 
-                    <div class="col-md-4">
-                        <label class="form-label">Serie documental:</label>
-                        <input class="form-control">
-                    </div>
+        <div class="modal-dialog modal-xl modal-dialog-scrollable">
 
-                    <div class="col-md-4">
-                        <label class="form-label">Número de expediente:</label>
-                        <input class="form-control">
-                    </div>
+            <div class="modal-content">
 
-                    <div class="col-md-4">
-                        <label class="form-label">Tipo de expediente:</label>
-                        <select class="form-select">
-                            <option>Ordinario</option>
-                            <option>Especial</option>
-                            <option>Paraprocesal</option>
-                            <option>Exhorto</option>
-                        </select>
-                    </div>
+                <div class="modal-header">
 
-                    <div class="col-12">
-                        <label class="form-label">Descripción:</label>
-                        <textarea class="form-control" rows="3"></textarea>
-                    </div>
+                    <h5 class="modal-title" id="modalTitle">
+                        Registro de Expediente
+                    </h5>
 
-                    <div class="col-md-4">
-                        <label class="form-label">Fecha de inicio de vida:</label>
-                        <input type="date" class="form-control">
-                    </div>
-
-                    <div class="col-md-4">
-                        <label class="form-label">Año:</label>
-                        <input type="number" class="form-control">
-                    </div>
-
-                    <div class="col-md-4">
-                        <label class="form-label">Unidad de Conservación:</label>
-                        <select class="form-select">
-                            <option>Cuadernillo</option>
-                            <option>Caja</option>
-                            <option>Tomo</option>
-                            <option>Carpeta</option>
-                        </select>
-                    </div>
-
-                    <div class="col-md-4">
-                        <label class="form-label">Número de fojas:</label>
-                        <input type="number" class="form-control">
-                    </div>
-
-                    <div class="col-12 text-end mt-3">
-                        <button class="btn btn-menu"><i class="bi bi-save"></i> Guardar</button>
-                    </div>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
 
                 </div>
-            </form>
 
-            <a href="#" class="btn btn-secondary back-btn">Volver arriba</a>
-        </div>
+                <div class="modal-body">
 
+                    <form>
+                        <input type="hidden" id="inputId">
 
-        <div id="eliminar" class="panel-box">
-            <h2 class="section-title"><i class="bi bi-trash"></i> Eliminar Expediente</h2>
+                        <div class="row g-3">
 
-            <label class="form-label">Número de expediente a eliminar:</label>
-            <div class="input-group mb-3">
-                <input id="deleteSearch" type="text" class="form-control" placeholder="Ej: 123/2025">
-                <button id="btnBuscarDelete" class="btn btn-menu"><i class="bi bi-search"></i> Buscar</button>
+                            <div class="col-md-4">
+                                <label class="form-label">Número de expediente</label>
+                                <input type="text" class="form-control" id="inputNumExp">
+                            </div>
+
+                            <div class="col-md-4">
+                                <label class="form-label">Serie documental</label>
+                                <input type="text" class="form-control" id="inputSerie">
+                            </div>
+
+                            <div class="col-md-4">
+
+                                <label class="form-label">Tipo de expediente</label>
+
+                                <select class="form-select" id="inputTipo">
+
+                                    <option>ORDINARIO</option>
+                                    <option>ESPECIAL</option>
+                                    <option>PARAPROCESAL</option>
+                                    <option>EXHORTO</option>
+                                    <option>COLECTIVO</option>
+
+                                </select>
+
+                            </div>
+
+                            <div class="col-12">
+
+                                <label class="form-label">
+                                    Descripción
+                                </label>
+
+                                <textarea class="form-control" rows="3" id="inputDescripcion"></textarea>
+
+                            </div>
+
+                            <div class="col-md-4">
+                                <label class="form-label">Fase</label>
+                                <input type="text" class="form-control" id="inputFase">
+                            </div>
+
+                            <div class="col-md-4">
+                                <label class="form-label">Fecha audiencia</label>
+                                <input type="date" class="form-control" id="inputFechaAudiencia">
+                            </div>
+
+                            <div class="col-md-4">
+                                <label class="form-label">Hora audiencia</label>
+                                <input type="time" class="form-control" id="inputHoraAudiencia">
+                            </div>
+
+                            <div class="col-12">
+
+                                <label class="form-label">
+                                    Observaciones
+                                </label>
+
+                                <textarea class="form-control" rows="3" id="inputObservaciones"></textarea>
+
+                            </div>
+
+                            <div class="col-md-4">
+                                <label class="form-label">Unidad conservación</label>
+                                <input type="text" class="form-control" id="inputUnidad">
+                            </div>
+
+                            <div class="col-md-4">
+                                <label class="form-label">Número folios</label>
+                                <input type="number" class="form-control" id="inputFolios">
+                            </div>
+
+                            <div class="col-md-4">
+                                <label class="form-label">Fecha inicio vida</label>
+                                <input type="date" class="form-control" id="inputFechaInicio">
+                            </div>
+
+                            <div class="col-md-4">
+                                <label class="form-label">Año expediente</label>
+                                <input type="number" class="form-control" id="inputAnio">
+                            </div>
+
+                            <div class="col-md-4">
+                                <label class="form-label">UGI</label>
+                                <input type="text" class="form-control" id="inputUGI">
+                            </div>
+
+                            <div class="col-md-4">
+                                <label class="form-label">Transferencia primaria</label>
+                                <input type="text" class="form-control" id="inputTransferencia">
+                            </div>
+
+                            <div class="col-md-6">
+                                <label class="form-label">Índice</label>
+                                <input type="text" class="form-control" id="inputIndice">
+                            </div>
+
+                            <div class="col-md-6">
+
+                                <label class="form-label">Estado</label>
+
+                                <select class="form-select" id="inputEstado">
+
+                                    <option>Activo</option>
+                                    <option>Archivado</option>
+                                    <option>Baja</option>
+
+                                </select>
+
+                            </div>
+
+                        </div>
+
+                    </form>
+
+                </div>
+
+                <div class="modal-footer">
+
+                    <button class="btn btn-secondary" data-bs-dismiss="modal">
+                        Cancelar
+                    </button>
+
+                    <button class="btn btn-menu" id="btnGuardar">
+
+                        <i class="bi bi-save"></i>
+                        Guardar expediente
+
+                    </button>
+
+                </div>
+
             </div>
 
-            <div id="deleteResult" class="mt-3" style="display:none;">
-                <h5>Resultado encontrado:</h5>
-
-                <table class="table table-bordered">
-                    <tbody>
-                        <tr>
-                            <th>Serie documental</th>
-                            <td id="delSerie"></td>
-                        </tr>
-                        <tr>
-                            <th>Número de expediente</th>
-                            <td id="delNumero"></td>
-                        </tr>
-                        <tr>
-                            <th>Tipo de expediente</th>
-                            <td id="delTipo"></td>
-                        </tr>
-                        <tr>
-                            <th>Descripción</th>
-                            <td id="delDesc"></td>
-                        </tr>
-                        <tr>
-                            <th>Fecha de inicio</th>
-                            <td id="delFecha"></td>
-                        </tr>
-                        <tr>
-                            <th>Año</th>
-                            <td id="delAnio"></td>
-                        </tr>
-                        <tr>
-                            <th>Unidad de Conservación</th>
-                            <td id="delUnidad"></td>
-                        </tr>
-                        <tr>
-                            <th>N° de fojas</th>
-                            <td id="delFojas"></td>
-                        </tr>
-                    </tbody>
-                </table>
-
-                <button class="btn btn-danger"><i class="bi bi-trash"></i> Eliminar definitivamente</button>
-            </div>
-
-            <a href="#" class="btn btn-secondary back-btn d-block mt-3">Volver arriba</a>
         </div>
 
     </div>
 
-
     <script>
-        // Datos de ejemplo (simulan BD, la cambiamos ya que esta lista la verdadera)
-        const datos = [
-            ["JL.J3.1.1.1/2020-168", "2719/2020", "Ordinario", "EXP.ORD.NUM 3A-2719/2020 (EXPEDIENTE ORDINARIO NUMERO 3A-2719/2020)", "2020"],
-            ["JL.J3.1.1.1/2025-001", "08/2025", "Ordinario", "EXP.ORD.NUM 3A-08/2025 (EXPEDIENTE ORDINARIO NUMERO 3A-08/2025)", "2025"],
-            ["JL.J3.1.1.1/2020-169", "1795/2020", "Ordinario", "EXP.ORD.NUM 3A-1795/2020 (EXPEDIENTE ORDINARIO NUMERO 3A-1795/2020)", "2020"],
-            ["JL.J3.1.1.1/2020-170", "174/2020", "Ordinario", "EXP.ORD.NUM 3A-174/2020 (EXPEDIENTE ORDINARIO NUMERO 3A-174/2020)", "2020"],
-            ["JL.J3.1.1.1/2018-073", "817/2018", "Ordinario", "EXP.ORD.NUM 3A-817/2018 (EXPEDIENTE ORDINARIO NUMERO 3A-817/2018)", "2018"],
-        ];
 
+        let datos = [];
+        let expedienteEditando = null;
+
+        async function cargarExpedientes() {
+
+            try {
+
+                const respuesta = await fetch('obtener_expedientes.php');
+
+                datos = await respuesta.json();
+
+                actualizarTabla();
+
+            } catch (error) {
+
+                console.error("Error cargando expedientes:", error);
+
+            }
+
+        }
 
         function actualizarTabla() {
-            const filtro = document.getElementById("searchInput").value.toLowerCase();
-            const limite = parseInt(document.getElementById("rowsSelector").value);
-            const tbody = document.getElementById("tableBody");
+
+            const search =
+                document.getElementById('searchInput')
+                    .value
+                    .toLowerCase();
+
+            const year =
+                document.getElementById('filterYear')
+                    .value;
+
+            const type =
+                document.getElementById('filterType')
+                    .value;
+
+            const tbody =
+                document.getElementById('tableBody');
 
             tbody.innerHTML = "";
 
             datos
-                .filter(row => row.join(" ").toLowerCase().includes(filtro))
-                .slice(0, limite)
-                .forEach(row => {
+                .filter(item => {
+
+                    const coincideBusqueda =
+                        Object.values(item)
+                            .join(" ")
+                            .toLowerCase()
+                            .includes(search);
+
+                    const coincideYear =
+                        !year || item.anio === year;
+
+                    const coincideTipo =
+                        !type || item.tipo === type;
+
+                    return coincideBusqueda
+                        && coincideYear
+                        && coincideTipo;
+
+                })
+
+                .forEach(item => {
+
                     tbody.innerHTML += `
+
                 <tr>
-                    <td>${row[0]}</td>
-                    <td>${row[1]}</td>
-                    <td>${row[2]}</td>
-                    <td>${row[3]}</td>
-                    <td>${row[4]}</td>
+
+                    <td>${item.numExp}</td>
+
+                    <td>${item.serie}</td>
+
+                    <td>${item.descripcion}</td>
+
+                    <td>${item.tipo}</td>
+
+                    <td>${item.fase}</td>
+
+                    <td>${item.fechaAudiencia || '-'}</td>
+
+                    <td>${item.horaAudiencia || '-'}</td>
+
+                    <td>${item.observaciones || '-'}</td>
+
+                    <td>${item.unidad}</td>
+
+                    <td>${item.folios}</td>
+
+                    <td>${item.fechaInicio}</td>
+
+                    <td>${item.anio}</td>
+
+                    <td>${item.ugi}</td>
+
+                    <td>${item.transferencia || '-'}</td>
+
+                    <td>${item.indice}</td>
+
                     <td>
-                        <button class="btn btn-warning btn-sm"><i class="bi bi-pencil"></i></button>
-                        <button class="btn btn-danger btn-sm"><i class="bi bi-trash"></i></button>
+                        <span class="badge badge-activo">
+                            ${item.estado}
+                        </span>
                     </td>
+
+                    <td>
+
+                        <div class="acciones">
+
+                            <button 
+                                class="btn-icon btn-edit"
+                                onclick="editarExpediente(${item.id})"
+                                data-bs-toggle="modal"
+                                data-bs-target="#modalExpediente"
+                            >
+                                <i class="bi bi-pencil"></i>
+                            </button>
+
+                            <button 
+                                class="btn-icon btn-delete"
+                                onclick="eliminarExpediente(${item.id})"
+                            >
+                                <i class="bi bi-trash"></i>
+                            </button>
+
+                        </div>
+
+                    </td>
+
                 </tr>
+
             `;
+
                 });
+
         }
 
-        document.getElementById("searchInput").addEventListener("keyup", actualizarTabla);
-        document.getElementById("rowsSelector").addEventListener("change", actualizarTabla);
+        function editarExpediente(id) {
 
-        window.onload = actualizarTabla;
+            const expediente = datos.find(
+                item => Number(item.id) === Number(id)
+            );
 
-        document.getElementById("btnBuscarDelete").addEventListener("click", function () {
-            const val = document.getElementById("deleteSearch").value.toLowerCase();
-            const resultado = datos.find(row => row[1].toLowerCase() === val);
+            if (!expediente) {
 
-            const panel = document.getElementById("deleteResult");
+                alert("No se encontró el expediente");
 
-            if (!resultado) {
-                panel.style.display = "none";
-                alert("No se encontró el expediente.");
+                return;
+
+            }
+
+            expedienteEditando = expediente.id;
+
+            document.getElementById('modalTitle').innerText =
+                "Editar Expediente";
+
+            document.getElementById('btnGuardar').innerHTML =
+                '<i class="bi bi-save"></i> Actualizar expediente';
+
+            document.getElementById('inputId').value =
+                expediente.id || "";
+
+            document.getElementById('inputNumExp').value =
+                expediente.numExp || "";
+
+            document.getElementById('inputSerie').value =
+                expediente.serie || "";
+
+            document.getElementById('inputTipo').value =
+                expediente.tipo || "";
+
+            document.getElementById('inputDescripcion').value =
+                expediente.descripcion || "";
+
+            document.getElementById('inputFase').value =
+                expediente.fase || "";
+
+            document.getElementById('inputFechaAudiencia').value =
+                expediente.fechaAudiencia || "";
+
+            document.getElementById('inputHoraAudiencia').value =
+                expediente.horaAudiencia || "";
+
+            document.getElementById('inputObservaciones').value =
+                expediente.observaciones || "";
+
+            document.getElementById('inputUnidad').value =
+                expediente.unidad || "";
+
+            document.getElementById('inputFolios').value =
+                expediente.folios || "";
+
+            document.getElementById('inputFechaInicio').value =
+                expediente.fechaInicio || "";
+
+            document.getElementById('inputAnio').value =
+                expediente.anio || "";
+
+            document.getElementById('inputUGI').value =
+                expediente.ugi || "";
+
+            document.getElementById('inputTransferencia').value =
+                expediente.transferencia || "";
+
+            document.getElementById('inputIndice').value =
+                expediente.indice || "";
+
+            document.getElementById('inputEstado').value =
+                expediente.estado || "Activo";
+
+        }
+
+        function nuevoExpediente() {
+
+            expedienteEditando = null;
+
+            document.getElementById('modalTitle').innerText =
+                "Registro de Expediente";
+
+            document.getElementById('btnGuardar').innerHTML =
+                '<i class="bi bi-save"></i> Guardar expediente';
+
+            document.getElementById('inputId').value = "";
+
+            document.querySelectorAll(
+                '#modalExpediente input, #modalExpediente textarea'
+            )
+                .forEach(campo => {
+
+                    if (campo.type !== "hidden") {
+
+                        campo.value = "";
+
+                    }
+
+                });
+
+            document.querySelectorAll(
+                '#modalExpediente select'
+            )
+                .forEach(select => {
+
+                    select.selectedIndex = 0;
+
+                });
+
+        }
+
+        function eliminarExpediente(id) {
+
+            const confirmar = confirm(
+                "¿Desea eliminar este expediente?"
+            );
+
+            if (!confirmar) {
                 return;
             }
 
-            // Llenar tabla de resultados, esta funciona hasta que tengamos la base real
-            document.getElementById("delSerie").innerText = resultado[0];
-            document.getElementById("delNumero").innerText = resultado[1];
-            document.getElementById("delTipo").innerText = resultado[2];
-            document.getElementById("delDesc").innerText = "Descripción simulada…";
-            document.getElementById("delFecha").innerText = "2025-01-01";
-            document.getElementById("delAnio").innerText = resultado[4];
-            document.getElementById("delUnidad").innerText = "Cuadernillo";
-            document.getElementById("delFojas").innerText = "35";
+            const index = datos.findIndex(
+                item => item.id === id
+            );
 
-            panel.style.display = "block";
-        });
+            if (index !== -1) {
+
+                datos.splice(index, 1);
+
+                actualizarTabla();
+
+            }
+
+        }
+
+        document
+            .getElementById('searchInput')
+            .addEventListener('keyup', actualizarTabla);
+
+        document
+            .getElementById('filterYear')
+            .addEventListener('change', actualizarTabla);
+
+        document
+            .getElementById('filterType')
+            .addEventListener('change', actualizarTabla);
+
+        const selectYear =
+            document.getElementById("filterYear");
+
+        for (let year = 1995; year <= 2026; year++) {
+
+            const option =
+                document.createElement("option");
+
+            option.value = year;
+            option.textContent = year;
+
+            selectYear.appendChild(option);
+
+        }
+        document
+            .getElementById('btnGuardar')
+            .addEventListener('click', async () => {
+
+                const formData = new FormData();
+
+                formData.append('id',
+                    document.getElementById('inputId').value);
+
+                formData.append('numExp',
+                    document.getElementById('inputNumExp').value);
+
+                formData.append('serie',
+                    document.getElementById('inputSerie').value);
+
+                formData.append('descripcion',
+                    document.getElementById('inputDescripcion').value);
+
+                formData.append('tipo',
+                    document.getElementById('inputTipo').value);
+
+                formData.append('fase',
+                    document.getElementById('inputFase').value);
+
+                formData.append('fechaAudiencia',
+                    document.getElementById('inputFechaAudiencia').value);
+
+                formData.append('horaAudiencia',
+                    document.getElementById('inputHoraAudiencia').value);
+
+                formData.append('observaciones',
+                    document.getElementById('inputObservaciones').value);
+
+                formData.append('unidad',
+                    document.getElementById('inputUnidad').value);
+
+                formData.append('folios',
+                    document.getElementById('inputFolios').value);
+
+                formData.append('fechaInicio',
+                    document.getElementById('inputFechaInicio').value);
+
+                formData.append('anio',
+                    document.getElementById('inputAnio').value);
+
+                formData.append('ugi',
+                    document.getElementById('inputUGI').value);
+
+                formData.append('transferencia',
+                    document.getElementById('inputTransferencia').value);
+
+                formData.append('indice',
+                    document.getElementById('inputIndice').value);
+
+                formData.append('estado',
+                    document.getElementById('inputEstado').value);
+
+                try {
+
+                    const respuesta = await fetch(
+                        'guardar_expediente.php',
+                        {
+                            method: 'POST',
+                            body: formData
+                        }
+                    );
+
+                    const resultado = await respuesta.json();
+
+                    if (resultado.success) {
+
+                        alert('Expediente guardado correctamente');
+
+                        bootstrap.Modal
+                            .getInstance(
+                                document.getElementById('modalExpediente')
+                            )
+                            .hide();
+
+                        cargarExpedientes();
+
+                    } else {
+
+                        alert('Error: ' + resultado.error);
+
+                    }
+
+                } catch (error) {
+
+                    console.error(error);
+
+                }
+
+            });
+
+        window.onload = cargarExpedientes;
+
     </script>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"></script>
 
 </body>
 

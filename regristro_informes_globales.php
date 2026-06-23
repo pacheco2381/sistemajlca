@@ -1,0 +1,997 @@
+<?php
+session_start();
+
+// ── Proteger la página: redirigir si no hay sesión ───────────────────────────
+if (!isset($_SESSION['username'])) {
+    header("Location: login.php");
+    exit;
+}
+
+// ── Datos del usuario logueado (vienen de login.php) ────────────────────────
+$nombre_usuario   = htmlspecialchars($_SESSION['nombre']         ?? $_SESSION['username']);
+$rol              = htmlspecialchars($_SESSION['rol']            ?? '');
+$tabla_asignada   = htmlspecialchars($_SESSION['tabla_asignada'] ?? '');
+
+// Mes activo: puede ajustarse aquí o consultarse desde BD
+$mes_activo = date('Y-m'); // mes actual del servidor, p.ej. "2026-05"
+?>
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Registro de Informes Globales</title>
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f5f5f5;
+        }
+
+        header {
+            background-color: #ffffff;
+            padding: 15px 20px;
+            position: fixed;
+            width: 100%;
+            top: 0;
+            left: 0;
+            z-index: 3000;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 20px;
+            border-bottom: 2px solid #662c44;
+        }
+
+        header .header-left {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+
+        header img.logo-header {
+            width: 140px;
+        }
+
+        /* Chip del usuario en el header */
+        .user-chip {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            background: #f3e8ed;
+            border: 1px solid #662c44;
+            border-radius: 20px;
+            padding: 6px 14px;
+            font-size: 0.9rem;
+            color: #4a001f;
+            font-weight: 600;
+            white-space: nowrap;
+        }
+
+        .user-chip i {
+            color: #662c44;
+        }
+
+        .main-content {
+            padding: 140px 20px 40px 20px;
+            max-width: 1000px;
+            margin: auto;
+        }
+
+        .btn-back {
+            background-color: #662c44;
+            color: white;
+            border: none;
+            margin-bottom: 20px;
+        }
+
+        .btn-back:hover {
+            background-color: #4a001f;
+            color: white;
+        }
+
+        .card-formulario {
+            background-color: white;
+            border-radius: 10px;
+            padding: 30px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        }
+
+        .titulo-principal {
+            color: #662c44;
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+
+        .descripcion {
+            color: #666;
+            margin-bottom: 30px;
+        }
+
+        .section-divider {
+            border-top: 1px solid #ddd;
+            margin: 30px 0 20px 0;
+            padding-top: 20px;
+        }
+
+        .section-title {
+            color: #662c44;
+            font-weight: bold;
+            font-size: 1.1rem;
+            margin-bottom: 20px;
+        }
+
+        .form-label {
+            font-weight: 600;
+            color: #444;
+        }
+
+        .form-control,
+        .form-select {
+            border-radius: 8px;
+        }
+
+        .total-box {
+            background-color: #f8f9fa;
+            border: 2px solid #662c44;
+            border-radius: 10px;
+            padding: 24px 20px 28px 20px;
+            text-align: center;
+            margin-top: 30px;
+            min-height: 125px;
+        }
+
+        .total-box h3 {
+            color: #662c44;
+            font-size: 1.1rem;
+            margin-bottom: 16px;
+            line-height: 1.3;
+        }
+
+        .total-input {
+            font-size: 2rem;
+            line-height: 1.2;
+            text-align: center;
+            font-weight: bold;
+            border: none;
+            background: transparent;
+            color: #662c44;
+            width: 100%;
+            height: 42px;
+            display: block;
+        }
+
+        .aviso {
+            background-color: #fff8e1;
+            border-left: 4px solid #662c44;
+            padding: 15px;
+            margin-top: 30px;
+            border-radius: 6px;
+            font-size: 0.95rem;
+            color: #555;
+        }
+
+        .estado-reporte {
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 25px;
+            font-size: 0.95rem;
+            display: none;
+        }
+
+        .estado-bloqueado {
+            background-color: #f8d7da;
+            color: #842029;
+            border-left: 4px solid #842029;
+        }
+
+        .estado-activo {
+            background-color: #d1e7dd;
+            color: #0f5132;
+            border-left: 4px solid #0f5132;
+        }
+
+        .estado-consulta {
+            background-color: #cff4fc;
+            color: #055160;
+            border-left: 4px solid #055160;
+        }
+
+        .acciones {
+            display: flex;
+            gap: 15px;
+            margin-top: 30px;
+            flex-wrap: wrap;
+        }
+
+        .btn-guardar {
+            background-color: #662c44;
+            color: white;
+            border: none;
+        }
+
+        .btn-guardar:hover {
+            background-color: #4a001f;
+            color: white;
+        }
+
+        .btn-imprimir {
+            background-color: #6c757d;
+            color: white;
+            border: none;
+        }
+
+        .responsable-box {
+            border: 1px solid #662c44;
+            border-radius: 12px;
+            overflow: hidden;
+            background: #faf7f9;
+        }
+
+        .responsable-header {
+            background: #662c44;
+            color: white;
+            padding: 12px 18px;
+            font-weight: bold;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .responsable-content {
+            padding: 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 15px;
+        }
+
+        .responsable-nombre {
+            font-size: 1.2rem;
+            font-weight: bold;
+            color: #333;
+        }
+
+        .responsable-lock {
+            background: #e9ecef;
+            padding: 10px 15px;
+            border-radius: 8px;
+            color: #666;
+            border: 1px solid #ced4da;
+        }
+
+        .tabla-actividades thead {
+            background-color: #662c44;
+            color: white;
+        }
+
+        .tabla-actividades th {
+            text-align: center;
+        }
+
+        .table-section td {
+            background-color: #ede3e8 !important;
+            color: #662c44;
+            font-weight: bold;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .tabla-actividades input {
+            min-width: 90px;
+            text-align: center;
+        }
+
+        /* Spinner de carga al cambiar mes */
+        #spinnerMes {
+            display: none;
+        }
+
+        .firma-sello-reporte {
+            display: none;
+        }
+
+        .pdf-mode .firma-sello-reporte {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-end;
+            gap: 40px;
+            margin-top: 45px;
+            padding-top: 25px;
+        }
+
+        .pdf-mode .firma-box {
+            width: 55%;
+            text-align: center;
+        }
+
+        .pdf-mode .linea-firma {
+            border-top: 1px solid #333;
+            margin-bottom: 8px;
+        }
+
+        .pdf-mode .firma-box p {
+            margin: 0;
+            font-weight: bold;
+            color: #333;
+        }
+
+        .pdf-mode .firma-box span {
+            font-size: 0.85rem;
+            color: #555;
+        }
+
+        .pdf-mode .sello-box {
+            width: 35%;
+            display: flex;
+            justify-content: center;
+        }
+
+        .pdf-mode .cuadro-sello {
+            width: 130px;
+            height: 90px;
+            border: 2px dashed #662c44;
+            color: #662c44;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+        }
+
+        @media print {
+            body {
+                background: white;
+            }
+
+            body * {
+                visibility: hidden;
+            }
+
+            #areaReporte,
+            #areaReporte * {
+                visibility: visible;
+            }
+
+            #areaReporte {
+                position: absolute;
+                left: 0;
+                top: 0;
+                width: 100%;
+                background: white;
+                padding: 30px;
+            }
+
+            .card-formulario {
+                box-shadow: none !important;
+                border: none !important;
+                padding: 0;
+            }
+
+            .acciones,
+            .btn-back,
+            footer,
+            .descripcion,
+            .titulo-principal,
+            #estadoReporte,
+            .aviso,
+            header {
+                display: none !important;
+            }
+
+            .tabla-actividades {
+                font-size: 12px;
+            }
+
+            .tabla-actividades th {
+                background-color: #662c44 !important;
+                color: white !important;
+                -webkit-print-color-adjust: exact;
+                print-color-adjust: exact;
+            }
+
+            .table-section td {
+                background-color: #ede3e8 !important;
+                color: #662c44 !important;
+                font-weight: bold;
+                -webkit-print-color-adjust: exact;
+                print-color-adjust: exact;
+            }
+
+            input {
+                border: none !important;
+                background: transparent !important;
+                box-shadow: none !important;
+                padding: 0 !important;
+            }
+
+            .responsable-box {
+                border: 1px solid #662c44 !important;
+                -webkit-print-color-adjust: exact;
+                print-color-adjust: exact;
+            }
+
+            .responsable-header {
+                background-color: #662c44 !important;
+                color: white !important;
+                -webkit-print-color-adjust: exact;
+                print-color-adjust: exact;
+            }
+
+            .total-box {
+                border: 2px solid #662c44 !important;
+                -webkit-print-color-adjust: exact;
+                print-color-adjust: exact;
+            }
+
+            .print-header {
+                display: block !important;
+                text-align: center;
+                margin-bottom: 30px;
+            }
+
+            .print-header img {
+                width: 120px;
+                margin-bottom: 10px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <header>
+        <div class="header-left">
+            <img src="assets/logo_favicon.png" class="logo-header" alt="Logo JLCA">
+            <h1 class="h4 mb-0">Registro de Informes Globales</h1>
+        </div>
+        <!-- Nombre del usuario logueado (viene de sesión PHP) -->
+        <div class="user-chip">
+            <i class="bi bi-person-circle"></i>
+            <?= $nombre_usuario ?>
+        </div>
+    </header>
+
+    <div class="main-content">
+
+        <a href="boton_repor.html" class="btn btn-back">
+            <i class="bi bi-arrow-left-circle"></i> Regresar
+        </a>
+
+        <div class="card-formulario">
+
+            <h2 class="titulo-principal">Captura de Informe Mensual</h2>
+            <p class="descripcion">Registro institucional de actividades jurisdiccionales y administrativas.</p>
+
+            <div id="estadoReporte" class="estado-reporte"></div>
+
+            <form id="formInforme" method="POST">
+
+                <div id="areaReporte">
+
+                    <div class="print-header" style="display:none;">
+                        <img src="assets/logo_favicon.png" alt="Logo JLCA">
+                        <h2>JUNTA LOCAL DE CONCILIACIÓN Y ARBITRAJE</h2>
+                        <h4>REPORTE GLOBAL MENSUAL DE ACTIVIDADES</h4>
+                        <p id="fechaImpresion"></p>
+                    </div>
+
+                    <!-- Responsable: nombre real desde sesión -->
+                    <div class="responsable-box mb-4">
+                        <div class="responsable-header">
+                            <i class="bi bi-person-badge"></i>
+                            Responsable del Informe
+                        </div>
+                        <div class="responsable-content">
+                            <div>
+                                <small class="text-muted">Servidor Público</small>
+                                <div class="responsable-nombre" id="responsableNombre">
+                                    <?= $nombre_usuario ?>
+                                </div>
+                                <small class="text-muted">Área: <?= $tabla_asignada ?></small>
+                            </div>
+                            <div class="responsable-lock">
+                                <i class="bi bi-lock-fill"></i>
+                                Campo protegido
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row mb-4 align-items-center">
+                        <div class="col-md-4">
+                            <label class="form-label">Mes de captura</label>
+                            <select id="mesCaptura" class="form-select" required>
+                                <option value="">Seleccione un mes</option>
+                                <option value="2026-01">Enero 2026</option>
+                                <option value="2026-02">Febrero 2026</option>
+                                <option value="2026-03">Marzo 2026</option>
+                                <option value="2026-04">Abril 2026</option>
+                                <option value="2026-05">Mayo 2026</option>
+                                <option value="2026-06">Junio 2026</option>
+                                <option value="2026-07">Julio 2026</option>
+                                <option value="2026-08">Agosto 2026</option>
+                                <option value="2026-09">Septiembre 2026</option>
+                                <option value="2026-10">Octubre 2026</option>
+                                <option value="2026-11">Noviembre 2026</option>
+                                <option value="2026-12">Diciembre 2026</option>
+                            </select>
+                        </div>
+                        <div class="col-md-2 mt-3">
+                            <div id="spinnerMes" class="spinner-border text-secondary" role="status" style="width:1.5rem;height:1.5rem;">
+                                <span class="visually-hidden">Cargando...</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="section-divider">
+                        <h3 class="section-title">Registro General de Actividades</h3>
+                        <div class="table-responsive">
+                            <table class="table table-bordered align-middle tabla-actividades">
+                                <thead>
+                                    <tr>
+                                        <th width="80%">Actividad</th>
+                                        <th width="20%">Cantidad</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr class="table-section">
+                                        <td colspan="2">DEMANDAS RADICADAS</td>
+                                    </tr>
+                                    <tr>
+                                        <td>Ordinarios</td>
+                                        <td><input type="number" min="0" class="form-control actividad" data-campo="ordinarios" name="ordinarios"></td>
+                                    </tr>
+                                    <tr>
+                                        <td>Especiales</td>
+                                        <td><input type="number" min="0" class="form-control actividad" data-campo="especiales" name="especiales"></td>
+                                    </tr>
+                                    <tr>
+                                        <td>Paraprocesales</td>
+                                        <td><input type="number" min="0" class="form-control actividad" data-campo="paraprocesales" name="paraprocesales"></td>
+                                    </tr>
+                                    <tr>
+                                        <td>Exhortos</td>
+                                        <td><input type="number" min="0" class="form-control actividad" data-campo="exhortos" name="exhortos"></td>
+                                    </tr>
+
+                                    <tr class="table-section">
+                                        <td colspan="2">LAUDOS</td>
+                                    </tr>
+                                    <tr>
+                                        <td>Condenatorios</td>
+                                        <td><input type="number" min="0" class="form-control actividad" data-campo="condenatorios" name="condenatorios"></td>
+                                    </tr>
+                                    <tr>
+                                        <td>Absolutorios</td>
+                                        <td><input type="number" min="0" class="form-control actividad" data-campo="absolutorios" name="absolutorios"></td>
+                                    </tr>
+                                    <tr>
+                                        <td>Mixtos</td>
+                                        <td><input type="number" min="0" class="form-control actividad" data-campo="mixtos" name="mixtos"></td>
+                                    </tr>
+
+                                    <tr class="table-section">
+                                        <td colspan="2">ACUERDOS</td>
+                                    </tr>
+                                    <tr>
+                                        <td>Junta</td>
+                                        <td><input type="number" min="0" class="form-control actividad" data-campo="junta" name="junta"></td>
+                                    </tr>
+                                    <tr>
+                                        <td>Presidencia</td>
+                                        <td><input type="number" min="0" class="form-control actividad" data-campo="presidencia" name="presidencia"></td>
+                                    </tr>
+
+                                    <tr class="table-section">
+                                        <td colspan="2">CONVENIOS</td>
+                                    </tr>
+                                    <tr>
+                                        <td>Convenios registrados</td>
+                                        <td><input type="number" min="0" class="form-control actividad" data-campo="convenios" name="convenios"></td>
+                                    </tr>
+
+                                    <tr class="table-section">
+                                        <td colspan="2">AUDIENCIAS</td>
+                                    </tr>
+                                    <tr>
+                                        <td>C, D y E</td>
+                                        <td><input type="number" min="0" class="form-control actividad" data-campo="cde" name="cde"></td>
+                                    </tr>
+                                    <tr>
+                                        <td>OAP</td>
+                                        <td><input type="number" min="0" class="form-control actividad" data-campo="oap" name="oap"></td>
+                                    </tr>
+                                    <tr>
+                                        <td>Desahogo de pruebas</td>
+                                        <td><input type="number" min="0" class="form-control actividad" data-campo="desahogo" name="desahogo"></td>
+                                    </tr>
+                                    <tr>
+                                        <td>Remates e incidentales</td>
+                                        <td><input type="number" min="0" class="form-control actividad" data-campo="remates" name="remates"></td>
+                                    </tr>
+
+                                    <tr class="table-section">
+                                        <td colspan="2">RESOLUCIONES</td>
+                                    </tr>
+                                    <tr>
+                                        <td>Resoluciones interlocutorias</td>
+                                        <td><input type="number" min="0" class="form-control actividad" data-campo="resoluciones" name="resoluciones"></td>
+                                    </tr>
+                                    <tr>
+                                        <td>Desistimiento, caducidad e incompetencia</td>
+                                        <td><input type="number" min="0" class="form-control actividad" data-campo="desistimiento" name="desistimiento"></td>
+                                    </tr>
+
+                                    <tr class="table-section">
+                                        <td colspan="2">NOTIFICACIONES</td>
+                                    </tr>
+                                    <tr>
+                                        <td>Ejecuciones y diligencias</td>
+                                        <td><input type="number" min="0" class="form-control actividad" data-campo="ejecuciones" name="ejecuciones"></td>
+                                    </tr>
+                                    <tr>
+                                        <td>Actuarios</td>
+                                        <td><input type="number" min="0" class="form-control actividad" data-campo="actuarios" name="actuarios"></td>
+                                    </tr>
+
+                                    <tr class="table-section">
+                                        <td colspan="2">AMPAROS</td>
+                                    </tr>
+                                    <tr>
+                                        <td>Directos</td>
+                                        <td><input type="number" min="0" class="form-control actividad" data-campo="directos" name="directos"></td>
+                                    </tr>
+                                    <tr>
+                                        <td>Indirectos</td>
+                                        <td><input type="number" min="0" class="form-control actividad" data-campo="indirectos" name="indirectos"></td>
+                                    </tr>
+
+                                    <tr class="table-section">
+                                        <td colspan="2">ADMINISTRATIVO</td>
+                                    </tr>
+                                    <tr>
+                                        <td>Oficios</td>
+                                        <td><input type="number" min="0" class="form-control actividad" data-campo="oficios" name="oficios"></td>
+                                    </tr>
+                                    <tr>
+                                        <td>Archivo</td>
+                                        <td><input type="number" min="0" class="form-control actividad" data-campo="archivo" name="archivo"></td>
+                                    </tr>
+                                    <tr>
+                                        <td>Despacho de ejecución</td>
+                                        <td><input type="number" min="0" class="form-control actividad" data-campo="despacho" name="despacho"></td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                    <div class="total-box">
+                        <h3>TOTAL DE ACTIVIDADES DEL MES</h3>
+                        <input type="text" id="totalGeneral" class="total-input" value="0" readonly name="totalGeneral">
+                    </div>
+
+                    <div class="firma-sello-reporte">
+                        <div class="firma-box">
+                            <div class="linea-firma"></div>
+                            <p id="firmaResponsable"><?= $nombre_usuario ?></p>
+                            <span>Responsable del Informe</span>
+                        </div>
+                        <div class="sello-box">
+                            <div class="cuadro-sello">SELLO</div>
+                        </div>
+                    </div>
+
+                </div><!-- /areaReporte -->
+
+                <div class="aviso">
+                    <i class="bi bi-exclamation-circle"></i>
+                    Una vez enviado el informe mensual, el registro quedará bloqueado.
+                    Cualquier modificación posterior deberá solicitarse al área de informática.
+                </div>
+
+                <div class="acciones">
+                    <button type="submit" id="btnGuardar" class="btn btn-guardar" disabled>
+                        <i class="bi bi-floppy"></i> Guardar Registro
+                    </button>
+                    <button type="button" id="btnImprimir" class="btn btn-imprimir" disabled>
+                        <i class="bi bi-printer"></i> Imprimir Reporte
+                    </button>
+                </div>
+
+            </form>
+        </div>
+
+        <footer class="mt-4 pb-3 text-center text-muted" style="font-size:.9rem;">
+            Sistema Institucional de Archivos — JLCA © 2026
+        </footer>
+
+    </div><!-- /main-content -->
+
+    <script>
+        // ── Constantes desde PHP (sesión) ─────────────────────────────────────
+        const MES_ACTIVO = "<?= $mes_activo ?>";
+        const EJERCICIO_PERMITIDO = "2026";
+
+        // ── Referencias DOM ───────────────────────────────────────────────────
+        const actividades = document.querySelectorAll('.actividad');
+        const totalGeneral = document.getElementById('totalGeneral');
+        const mesCaptura = document.getElementById('mesCaptura');
+        const btnGuardar = document.getElementById('btnGuardar');
+        const btnImprimir = document.getElementById('btnImprimir');
+        const estadoReporte = document.getElementById('estadoReporte');
+        const formInforme = document.getElementById('formInforme');
+        const spinnerMes = document.getElementById('spinnerMes');
+
+        // ── Utilidades ────────────────────────────────────────────────────────
+        function calcularTotal() {
+            let total = 0;
+            actividades.forEach(i => total += parseInt(i.value) || 0);
+            totalGeneral.value = total;
+        }
+
+        function limpiarFormulario() {
+            actividades.forEach(i => {
+                i.value = "";
+            });
+            totalGeneral.value = "0";
+        }
+
+        function bloquearCampos() {
+            actividades.forEach(i => i.disabled = true);
+        }
+
+        function habilitarCampos() {
+            actividades.forEach(i => i.disabled = false);
+        }
+
+        function mostrarEstado(mensaje, tipo) {
+            estadoReporte.className = "estado-reporte " + tipo;
+            estadoReporte.innerHTML = mensaje;
+            estadoReporte.style.display = "block";
+        }
+
+        function cargarDatosReporte(datos) {
+            limpiarFormulario();
+            Object.entries(datos).forEach(([campo, valor]) => {
+                const input = document.querySelector(`[data-campo="${campo}"]`);
+                if (input) input.value = valor;
+            });
+            calcularTotal();
+        }
+
+        function obtenerDatosFormulario() {
+            const datos = {};
+            actividades.forEach(i => {
+                datos[i.dataset.campo] = parseInt(i.value) || 0;
+            });
+            return datos;
+        }
+
+        // ── Carga de reporte desde BD al cambiar mes ──────────────────────────
+        async function evaluarMesSeleccionado() {
+            const mes = mesCaptura.value;
+
+            limpiarFormulario();
+            bloquearCampos();
+            btnGuardar.disabled = true;
+            btnImprimir.disabled = true;
+            estadoReporte.style.display = "none";
+
+            if (!mes) {
+                mostrarEstado(
+                    '<i class="bi bi-info-circle"></i> Seleccione un mes del ejercicio 2026 para consultar o capturar el informe.',
+                    'estado-consulta'
+                );
+                return;
+            }
+
+            const ejercicio = mes.split("-")[0];
+            if (ejercicio !== EJERCICIO_PERMITIDO) {
+                mostrarEstado(
+                    '<i class="bi bi-lock-fill"></i> Solo está disponible la revisión del ejercicio 2026.',
+                    'estado-bloqueado'
+                );
+                return;
+            }
+
+            // Consultar BD
+            spinnerMes.style.display = "block";
+            try {
+                const resp = await fetch(`obtener_reporte.php?mes=${mes}`);
+                const json = await resp.json();
+
+                if (!json.success) {
+                    mostrarEstado('<i class="bi bi-x-circle"></i> Error al consultar: ' + json.message, 'estado-bloqueado');
+                    return;
+                }
+
+                if (json.existe) {
+                    // Registro previo: solo lectura
+                    cargarDatosReporte(json.datos);
+                    bloquearCampos();
+                    btnGuardar.disabled = true;
+                    btnImprimir.disabled = false;
+                    mostrarEstado(
+                        '<i class="bi bi-check-circle"></i> El informe de este mes ya fue capturado. Disponible solo para consulta e impresión.',
+                        'estado-consulta'
+                    );
+                } else if (mes === MES_ACTIVO) {
+                    // Mes activo sin datos: habilitar captura
+                    habilitarCampos();
+                    btnGuardar.disabled = false;
+                    btnImprimir.disabled = true;
+                    mostrarEstado(
+                        '<i class="bi bi-pencil-square"></i> Mes activo para captura. Al guardar, el registro quedará bloqueado.',
+                        'estado-activo'
+                    );
+                } else {
+                    // Mes sin datos y no activo
+                    bloquearCampos();
+                    mostrarEstado(
+                        '<i class="bi bi-lock-fill"></i> Este mes no está habilitado para captura y no cuenta con un informe previo.',
+                        'estado-bloqueado'
+                    );
+                }
+            } catch (e) {
+                mostrarEstado('<i class="bi bi-x-circle"></i> Error de conexión al servidor.', 'estado-bloqueado');
+            } finally {
+                spinnerMes.style.display = "none";
+            }
+        }
+
+        // ── Guardar informe ───────────────────────────────────────────────────
+        formInforme.addEventListener('submit', async function(e) {
+            e.preventDefault();
+
+            const mes = mesCaptura.value;
+            if (mes !== MES_ACTIVO) {
+                alert("Este mes no está habilitado para captura.");
+                return;
+            }
+
+            if (!confirm("Una vez guardado, el informe quedará bloqueado. ¿Desea continuar?")) return;
+
+            const datos = obtenerDatosFormulario();
+            datos.mes = mes;
+            datos.total_mes = totalGeneral.value;
+
+            btnGuardar.disabled = true;
+            btnGuardar.innerHTML = '<span class="spinner-border spinner-border-sm"></span> Guardando...';
+
+            try {
+                const resp = await fetch('guardar_reporte.php', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(datos)
+                });
+                const json = await resp.json();
+
+                if (!json.success) {
+                    alert("Error: " + json.message);
+                    btnGuardar.disabled = false;
+                    btnGuardar.innerHTML = '<i class="bi bi-floppy"></i> Guardar Registro';
+                    return;
+                }
+
+                bloquearCampos();
+                btnGuardar.innerHTML = '<i class="bi bi-floppy"></i> Guardar Registro';
+                btnImprimir.disabled = false;
+                mostrarEstado(
+                    '<i class="bi bi-check-circle"></i> Informe guardado correctamente. El registro quedó bloqueado.',
+                    'estado-consulta'
+                );
+            } catch (err) {
+                alert("Error de conexión al servidor.");
+                btnGuardar.disabled = false;
+                btnGuardar.innerHTML = '<i class="bi bi-floppy"></i> Guardar Registro';
+            }
+        });
+
+        // ── Imprimir PDF ──────────────────────────────────────────────────────
+        btnImprimir.addEventListener('click', async function() {
+            const areaReporte = document.getElementById('areaReporte');
+            const {
+                jsPDF
+            } = window.jspdf;
+
+            const fecha = new Date().toLocaleString('es-MX', {
+                year: 'numeric',
+                month: 'long',
+                day: 'numeric',
+                hour: '2-digit',
+                minute: '2-digit'
+            });
+            document.getElementById('fechaImpresion').textContent = "Fecha de impresión: " + fecha;
+
+            const printHeader = areaReporte.querySelector('.print-header');
+            if (printHeader) {
+                printHeader.style.display = 'block';
+                const logoPDF = printHeader.querySelector('img');
+                if (logoPDF) {
+                    logoPDF.style.width = '85px';
+                    logoPDF.style.marginBottom = '6px';
+                }
+            }
+
+            areaReporte.classList.add('pdf-mode');
+            areaReporte.style.width = '720px';
+            areaReporte.style.background = '#ffffff';
+            areaReporte.style.padding = '8px';
+
+            const canvas = await html2canvas(areaReporte, {
+                scale: 2,
+                backgroundColor: '#ffffff',
+                useCORS: true,
+                scrollY: 0
+            });
+
+            areaReporte.classList.remove('pdf-mode');
+            if (printHeader) {
+                printHeader.style.display = 'none';
+                const logoPDF = printHeader.querySelector('img');
+                if (logoPDF) {
+                    logoPDF.style.width = '';
+                    logoPDF.style.marginBottom = '';
+                }
+            }
+            areaReporte.style.width = areaReporte.style.padding = '';
+
+            const pdf = new jsPDF({
+                orientation: 'portrait',
+                unit: 'pt',
+                format: 'letter'
+            });
+            const pageWidth = pdf.internal.pageSize.getWidth();
+            const pageHeight = pdf.internal.pageSize.getHeight();
+            const mT = 20,
+                mL = 24,
+                mR = 24,
+                mB = 40;
+            const pdfW = pageWidth - mL - mR;
+            const pdfH = pageHeight - mT - mB;
+            const ratio = pdfW / canvas.width;
+            const pageCanvasH = pdfH / ratio;
+            const totalPages = Math.ceil(canvas.height / pageCanvasH);
+
+            for (let page = 0; page < totalPages; page++) {
+                if (page > 0) pdf.addPage();
+                const srcY = page * pageCanvasH;
+                const srcH = Math.min(pageCanvasH, canvas.height - srcY);
+                const pc = document.createElement('canvas');
+                pc.width = canvas.width;
+                pc.height = srcH;
+                pc.getContext('2d').drawImage(canvas, 0, srcY, canvas.width, srcH, 0, 0, canvas.width, srcH);
+                pdf.addImage(pc.toDataURL('image/png'), 'PNG', mL, mT, pdfW, srcH * ratio);
+                pdf.setFontSize(9);
+                pdf.setTextColor(80);
+                pdf.text(`${page + 1} de ${totalPages}`, pageWidth / 2, pageHeight - 16, {
+                    align: 'center'
+                });
+            }
+
+            pdf.save('reporte_global_mensual.pdf');
+        });
+
+        // ── Listeners ─────────────────────────────────────────────────────────
+        actividades.forEach(i => i.addEventListener('input', calcularTotal));
+        mesCaptura.addEventListener('change', evaluarMesSeleccionado);
+
+        // Estado inicial
+        evaluarMesSeleccionado();
+    </script>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"></script>
+
+</body>
+
+</html>
